@@ -1,15 +1,13 @@
 <?php
-$base_path = file_exists(__DIR__ . '/includes/config.php') ? __DIR__ : __DIR__ . '/s7even-parfums';
-
-require_once $base_path . '/includes/config.php';
-require_once $base_path . '/includes/productos.php';
-require_once $base_path . '/includes/carrito.php';
+require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/productos.php';
+require_once __DIR__ . '/includes/carrito.php';
 
 $base = '';
 $page_title = 'S7even Parfums - El instinto, embotellado';
 $mensaje = $_GET['agregado'] ?? null;
 
-require $base_path . '/includes/header.php';
+require __DIR__ . '/includes/header.php';
 ?>
 <!-- ===== HERO ===== -->
 <section class="hero" id="top">
