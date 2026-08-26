@@ -1,31 +1,15 @@
-FROM php:8.2-apache
+FROM php:8.2-cli
 
-# Habilitar mod_rewrite si tu tienda usa URLs amigables
-RUN a2enmod rewrite
+WORKDIR /app
 
-# Configurar Apache para permitir acceso total a /var/www/html/
-RUN echo '<Directory /var/www/html/>\n\
-    Options Indexes FollowSymLinks\n\
-    AllowOverride All\n\
-    Require all granted\n\
-</Directory>' > /etc/apache2/conf-available/override.conf \
-    && a2enconf override
+COPY . /app
 
-# Copiar el proyecto
-COPY . /var/www/html/
+# Mover contenido si quedó atrapado en la subcarpeta s7even-parfums
+RUN if [ -d "/app/s7even-parfums" ]; then cp -r /app/s7even-parfums/* /app/ 2>/dev/null || true; fi
 
-# Mover archivos de subcarpetas si existen
-RUN if [ -d "/var/www/html/s7even-parfums" ]; then \
-        cp -r /var/www/html/s7even-parfums/* /var/www/html/ 2>/dev/null || true; \
-    fi && \
-    if [ -d "/var/www/html/s7even_parfums" ]; then \
-        cp -r /var/www/html/s7even_parfums/* /var/www/html/ 2>/dev/null || true; \
-    fi
+# Crear carpeta de datos y dar permisos totales de lectura y escritura
+RUN mkdir -p /app/data && chmod -R 777 /app
 
-# Asignar permisos correctos al usuario de Apache (www-data)
-RUN chown -R www-data:www-data /var/www/html && \
-    chmod -R 755 /var/www/html && \
-    mkdir -p /var/www/html/data && \
-    chmod -R 777 /var/www/html/data
+EXPOSE 10000
 
-EXPOSE 80
+CMD ["php", "-S", "0.0.0.0:10000", "-t", "/app"]
